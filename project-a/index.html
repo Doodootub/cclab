@@ -1,0 +1,89 @@
+<!-- 
+Template for IMA's Creative Coding Lab 
+
+Project A: Generative Creatures
+CCLaboratories Biodiversity Atlas 
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>[ Mr.NumbyNooby ]</title>
+
+    <!-- allow special characters, including Arabic, Chinese, Korean, Japanese, etc. -->
+    <meta charset="UTF-8">
+    <!-- link the style sheet -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <!-- import p5.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js"></script>
+    <script>
+        // prevent scrolling when spacebar and arrow keys are pressed.
+        window.addEventListener("keydown", function (e) { if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) { e.preventDefault(); } }, false);
+    </script>
+</head>
+
+<body>
+    <!-- title -->
+    <div id="title-wrapper">
+        <h1 class="headline black">[ NumbyNooby's Head ]</h1>
+    </div>
+
+    <!-- main content -->
+    <div id="main-wrapper">
+        <div id="p5-canvas-container">
+            <!-- This is where your p5 sketch will be appended and appear! -->
+        </div>
+        <div class="two-columns">
+            <div class="left">
+                <h3 class="red">Scientific Name:</h3>
+                <p>NumbyNooby</p>
+
+                <h3 class="red">Discovered by / at:</h3>
+                <p>Doodootub, Late nights in the middle of June</p>
+
+                <h3 class="green">Family:</h3>
+                <p>Assumptions have been made that NumbyNooby travels alone here and his spaceships crashed on earth, we actually have no idea about him, even his gender, we use the pronoun he/his/him because earth is dominated by male narrative perspective.</p>
+            </div>
+            <div class="right">
+                <h3 class="green">Habitat:</h3>
+                <p>Feel like NumbyNooby are not used to the humidity in Shanghai, he seems dull when there you don't interact with him.</p>
+
+                <h3 class="green">Appearance:</h3>
+                <p>NumbyNooby is adorable apparently. Big head, big eyes, small body which I did not show on the screen, it's like a cartoon character came to alive!</p>
+
+                <h3 class="green">Key Characteristics:</h3>
+                <ul>
+                    <li>Flexible eyes</li>
+                    <li>Bad at math</li>
+                    <li>simple feelings</li>
+                    <li>can survive without food intake in 7 days or any longer</li>
+                </ul>
+            </div>
+        </div>
+        <div class="one-column">
+            <p>
+                <span class="yellow">What we know so far about [ NumbyNooby ]?</span>
+                NumbyNooby is a small, cartoon-like creature with a big head and even bigger, flexible eyes that seem to follow you everywhere. He doesn’t handle the sticky Shanghai humidity very well and looks a bit dull when you leave him alone, but he instantly perks up whenever you interact with him. Despite his simple feelings and his complete inability to do math, he’s endlessly adorable. Remarkably, NumbyNooby can go a full week—or even longer—without eating, making him both sweet and surprisingly tough.
+
+                <br>
+                <span class="yellow">Guidelines for human interaction with this creature</span> Try to click or just put the mouse of different areas of his head. You can also play around with key board to see how it goes!
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer" class="black">
+        <p>A CCLab project made by [Mr.NumbyNooby] in [Sum2025]</p>
+    </div>
+
+    <!-- Home: Link back to the ATLAS page-->
+    <div id="home">
+        <a href="https://cclab.work/atlas">Back to the ATLAS</a>
+    </div>
+
+    <!-- Include your sketch.js file here -->
+    <script src="sketch.js" type="text/javascript"> </script>
+</body>
+
+</html>
