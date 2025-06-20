@@ -22,8 +22,6 @@ function setup() {
 
 function draw() {
   background(247, 235, 204);
-  fill("blue");
-  text(mouseX + ", " + mouseY, mouseX, mouseY);
   drawCreature();
 }
 

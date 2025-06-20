@@ -24,7 +24,7 @@ function setup() {
 function draw() {
   // you don't need to make any adjustments inside the draw loop
   background(0);
-  drawFloor(); // for reference only
+  //drawFloor(); // for reference only
 
   dancer.update();
   dancer.display();
@@ -50,11 +50,15 @@ class SandraDancer {
 
     this.timeOfHatEvent    = -Infinity; 
   this.hatEffectDuration = 60;         
-  this.hatJumpHeight     = 40;         // max jump in px
+  this.hatJumpHeight     = 40;  //max jump range    
   this.hatOffsetY        = 0;          
   // this.hatLooseOffset    = 0;          
   // this.hatLooseAmp       = 8;          
-  // this.hatLooseSpeed     = 0.3;        
+  // this.hatLooseSpeed     = 0.3;
+  this.timeOfWink     = -Infinity;
+  this.winkDuration   = 15;    
+  this.isWinking      = false;
+
 
   }
   update() {
@@ -92,6 +96,7 @@ class SandraDancer {
     this.hatOffsetY     = 0;
     //this.hatLooseOffset = 0;
   }
+  this.isWinking = (frameCount - this.timeOfWink) < this.winkDuration;
 
 
 
@@ -112,7 +117,17 @@ class SandraDancer {
     //eyes
     fill(0)
     circle(20,-10,13)
-    circle(-20,-10,13)
+    if (!this.isWinking) {
+      circle(-20, -10, 13);
+    } else {
+      stroke(0);
+      strokeWeight(2);
+      line(-20 - 6, -10, -20 + 6, -10);
+      noStroke();
+    }
+  
+
+    //circle(-20,-10,13)
     pop()
 
     
@@ -187,17 +202,23 @@ class SandraDancer {
 
 
 
- push();
-  fill("yellow")
-  translate(0, this.hatOffsetY+this.headOffset);
+//  push();
+//   fill("yellow")
+//   translate(0, this.hatOffsetY+this.headOffset);
 
   for (let i = 0; i <= 50; i += 5) {
+    push();
+   fill("yellow")
+   translate(0, this.hatOffsetY*(0.6+i*0.03)+this.headOffset);
+
     let angleOffset = map(i, 0, 50, 0, 30);
     let startA = 50 + angleOffset;
     let endA   = 130 - angleOffset;
     arc(0, -60 - i, 80, 60, radians(startA), radians(endA));
+
+    pop()
   }
-  pop();
+  //pop();
 
 
 
@@ -210,7 +231,7 @@ class SandraDancer {
     // it is using "this" because this function, too, 
     // is a part if your Dancer object.
     // comment it out or delete it eventually.
-    this.drawReferenceShapes()
+    //this.drawReferenceShapes()
 
     pop();
   }
@@ -224,19 +245,19 @@ class SandraDancer {
   triggerD(){
     // this function will be called when the "d" key is pressed.
     // your dancer should perform some kind of reaction (i.e. make a special move or gesture) 
-    
+    this.timeOfWink = frameCount;
      //this.timeOfHatEvent = frameCount;
 
   }
-  drawReferenceShapes() {
-    noFill();
-    line(-5, 0, 5, 0);
-    line(0, -5, 0, 5);
-    stroke(255);
-    rect(-100, -100, 200, 200);
-    fill(255);
-    stroke(0);
-  }
+  // drawReferenceShapes() {
+  //   noFill();
+  //   line(-5, 0, 5, 0);
+  //   line(0, -5, 0, 5);
+  //   stroke(255);
+  //   rect(-100, -100, 200, 200);
+  //   fill(255);
+  //   stroke(0);
+  // }
 }
 
 
