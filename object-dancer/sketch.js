@@ -9,7 +9,9 @@
   4. start coding your dancer inside the class that has been prepared for you.
   5. have fun.
 */
+let NUM_OF_PARTICLES = 100; // Decide the initial number of particles.
 
+let particles = [];
 let dancer;
 
 function setup() {
@@ -19,19 +21,106 @@ function setup() {
 
   // ...except to adjust the dancer's name on the next line:
   dancer = new SandraDancer(width / 2, height / 2);
+    // generate particles
+  for (let i = 0; i < NUM_OF_PARTICLES; i++) {
+    particles[i] = new Particle(width*0.75, height * 0.85);
+  }
 }
 
 function draw() {
   // you don't need to make any adjustments inside the draw loop
   background(0);
-  //drawFloor(); // for reference only
+  drawFloor(); // for reference only
+
+  //confettis.push(new Confetti(width/2, height/2));
+
+  // update and display
+  for(let i = 0; i < particles.length; i++){
+    particles[i].update();
+    particles[i].display();
+  }
+  fill(255)
+  // text(confettis.length,20,20)
 
   dancer.update();
   dancer.display();
+   
 }
 
-// You only code inside this class.
-// Start by giving the dancer your name, e.g. LeonDancer.
+class Particle {
+  // constructor function
+  constructor(startX, startY) {
+    // properties (variables): particle's characteristics
+    this.fireX = startX;
+    this.fireY = startY;
+    this.x = this.fireX + random(-100,100)
+    this.y = this.fireY -random(0,200)
+    this.width = 27;
+    this.height = 27;
+    this.col = color(255, 0, 0);
+     this.dist = 0;
+  } 
+ 
+  update() {
+    // every 10 frames
+    if(frameCount%10 == 0){
+      this.x = this.fireX + randomGaussian(0,60)
+      this.y = this.fireY -abs(randomGaussian(0,100))
+    
+  }
+   
+  
+
+    this.dist = dist(this.fireX, this.fireY, this.x,this.y);
+
+  if (this.dist < 50) {
+    this.col = color(255, 235, 82);
+  } else if (this.dist < 100) {
+    this.col = color(189, 134, 8);
+  } else if (this.dist < 150) {
+    this.col = color(194, 86, 23);
+  } else{
+    this.col = color(191, 32, 4);
+  }
+  }
+  display() {
+    // particle's appearance
+    push();
+    translate(this.x, this.y);
+    fill(this.col);
+    noStroke()
+
+    rect(0, 0, this.width, this.height);
+  
+    pop();
+
+
+
+    // show the fire center
+    fill(255);
+    circle(this.fireX, this.fire, 10)
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class SandraDancer {
   constructor(startX, startY) {
     // add properties for your dancer here:
@@ -158,7 +247,7 @@ class SandraDancer {
         pop()
       pop()
         //right hip
-        fill("green")
+        fill(this.col)
         circle(0,0,10)    
     pop()
 
@@ -193,7 +282,7 @@ class SandraDancer {
 
 
     //left hip
-    fill("green")
+    fill(this.col)
     circle(0,0,10)
   pop()
 
@@ -262,29 +351,16 @@ class SandraDancer {
 
 
 
-/*
-GOAL:
-The goal is for you to write a class that produces a dancing being/creature/object/thing. In the next class, your dancer along with your peers' dancers will all dance in the same sketch that your instructor will put together. 
-
-RULES:
-For this to work you need to follow one rule: 
-  - Only put relevant code into your dancer class; your dancer cannot depend on code outside of itself (like global variables or functions defined outside)
-  - Your dancer must perform by means of the two essential methods: update and display. Don't add more methods that require to be called from outside (e.g. in the draw loop).
-  - Your dancer will always be initialized receiving two arguments: 
-    - startX (currently the horizontal center of the canvas)
-    - startY (currently the vertical center of the canvas)
-  beside these, please don't add more parameters into the constructor function 
-  - lastly, to make sure our dancers will harmonize once on the same canvas, please don't make your dancer bigger than 200x200 pixels. 
-*/
-
-/*
-Here are the key events that your dancer should react to in some way.
-*/
-
 function keyPressed(){
-  if(key == "a"){
-    dancer.triggerA()
-  }else if(key == "d"){
-    dancer.triggerD()
+  if (key === "a"){
+    dancer.triggerA();
+  } else if (key === "d"){
+    dancer.triggerD();
+  } else if (key === "p"){
+    for (let i = 0; i < 100; i++){
+      particles.push(new Particle(width * 0.75, height * 0.85));
+    }
   }
 }
+
+
