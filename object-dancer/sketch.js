@@ -9,7 +9,7 @@
   4. start coding your dancer inside the class that has been prepared for you.
   5. have fun.
 */
-let NUM_OF_PARTICLES = 100; // Decide the initial number of particles.
+let NUM_OF_PARTICLES = 200; // Decide the initial number of particles.
 
 let particles = [];
 let dancer;
@@ -357,8 +357,19 @@ function keyPressed(){
   } else if (key === "d"){
     dancer.triggerD();
   } else if (key === "p"){
-    for (let i = 0; i < 100; i++){
-      particles.push(new Particle(width * 0.75, height * 0.85));
+
+    // intensifies existing fire
+
+    // for (let i = 0; i < 100; i++){
+    //   particles.push(new Particle(width * 0.75, height * 0.85));
+    // }
+
+
+    // start new fire
+    let x = random(width);
+    let y = random(height/2, height)
+     for (let i = 0; i < NUM_OF_PARTICLES; i++){
+      particles.push(new Particle(x, y));
     }
   }
 }
