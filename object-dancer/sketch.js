@@ -1,46 +1,44 @@
-/*
-  Check our the GOAL and the RULES of this exercise at the bottom of this file.
-  
-  After that, follow these steps before you start coding:
 
-  1. rename the dancer class to reflect your name (line 35).
-  2. adjust line 20 to reflect your dancer's name, too.
-  3. run the code and see if a square (your dancer) appears on the canvas.
-  4. start coding your dancer inside the class that has been prepared for you.
-  5. have fun.
-*/
-let NUM_OF_PARTICLES = 200; // Decide the initial number of particles.
+let numOfParticles = 200;
 
 let particles = [];
 let dancer;
 
+let winkSound
+
+const shiverThreshold= 800
+
+function preload(){
+  winkSound = loadSound('lib/beat.mp3');
+}
+
 function setup() {
-  // no adjustments in the setup function needed...
   let canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent("p5-canvas-container");
 
-  // ...except to adjust the dancer's name on the next line:
   dancer = new SandraDancer(width / 2, height / 2);
-    // generate particles
-  for (let i = 0; i < NUM_OF_PARTICLES; i++) {
-    particles[i] = new Particle(width*0.75, height * 0.85);
-  }
+
+  // for (let i = 0; i < NUM_OF_PARTICLES; i++) {
+  //   particles[i] = new Particle(width*0.75, height * 0.85);
+  // }
 }
 
 function draw() {
-  // you don't need to make any adjustments inside the draw loop
   background(0);
   drawFloor(); // for reference only
 
-  //confettis.push(new Confetti(width/2, height/2));
-
-  // update and display
-  for(let i = 0; i < particles.length; i++){
-    particles[i].update();
-    particles[i].display();
+  for (let i = particles.length - 1; i >= 0; i--) {
+    let p = particles[i];
+    p.update();
+    if (p.dead) {
+      particles.splice(i, 1);
+    } else {
+      p.display();
+    }
   }
-  fill(255)
-  // text(confettis.length,20,20)
+  if (particles.length > shiverThreshold) {
+    dancer.startShiver();
+  }
 
   dancer.update();
   dancer.display();
@@ -50,29 +48,29 @@ function draw() {
 class Particle {
   // constructor function
   constructor(startX, startY) {
-    // properties (variables): particle's characteristics
     this.fireX = startX;
     this.fireY = startY;
     this.x = this.fireX + random(-100,100)
     this.y = this.fireY -random(0,200)
-    this.width = 27;
-    this.height = 27;
+    // this.width = 27;
+    // this.height = 27;
     this.col = color(255, 0, 0);
-     this.dist = 0;
+    this.dist = 0;
+    this.initialSize = 27;
+    this.size = this.initialSize;
+    this.birthFrame = frameCount;
+    this.lifeSpan   = 240;   
+    this.dead = false;
   } 
  
   update() {
-    // every 10 frames
     if(frameCount%10 == 0){
       this.x = this.fireX + randomGaussian(0,60)
       this.y = this.fireY -abs(randomGaussian(0,100))
     
   }
-   
-  
-
+  //color distribution
     this.dist = dist(this.fireX, this.fireY, this.x,this.y);
-
   if (this.dist < 50) {
     this.col = color(255, 235, 82);
   } else if (this.dist < 100) {
@@ -82,42 +80,39 @@ class Particle {
   } else{
     this.col = color(191, 32, 4);
   }
+  //age of fire
+  let age = frameCount - this.birthFrame;
+  if (age >= this.lifeSpan) {
+    this.dead = true;
+  } else {
+      let t = age / this.lifeSpan;      
+      this.size = this.initialSize * (1 - t);
+    }
+  
   }
   display() {
     // particle's appearance
     push();
     translate(this.x, this.y);
+                                //top of the fire      //bottom               
+    let scaleFactor = map(this.y, this.fireY - 200,     this.fireY +  50, 0.2, 2, true);
+    let s = this.size * scaleFactor;
     fill(this.col);
-    noStroke()
+    noStroke();
+    rect(0, 0, s, s);
 
-    rect(0, 0, this.width, this.height);
-  
+
+    // noStroke()
+    // rect(0, 0, this.size, this.size);
     pop();
-
-
 
     // show the fire center
     fill(255);
     circle(this.fireX, this.fire, 10)
+
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -134,70 +129,67 @@ class SandraDancer {
     this.squatAngle = 0
     this.speed = 0.05
     this.maxBend = PI/7
-   this.timeOfBend = -Infinity
-   this.effectDuration = 200
+    this.timeOfBend = -Infinity
+    this.effectDuration = 200
 
     this.timeOfHatEvent    = -Infinity; 
-  this.hatEffectDuration = 60;         
-  this.hatJumpHeight     = 40;  //max jump range    
-  this.hatOffsetY        = 0;          
-  // this.hatLooseOffset    = 0;          
-  // this.hatLooseAmp       = 8;          
-  // this.hatLooseSpeed     = 0.3;
-  this.timeOfWink     = -Infinity;
-  this.winkDuration   = 15;    
-  this.isWinking      = false;
-
+   this.hatEffectDuration = 60;         
+   this.hatJumpHeight     = 40;  //max jump range    
+   this.hatOffsetY        = 0;          
+   this.timeOfWink     = -Infinity;
+   this.winkDuration   = 15;    
+   this.isWinking      = false;
+  
+   this.shiverStart     = -Infinity;
+   this.shiverDuration  = 120;      
+   this.shiverAmp       = 5;        
+   this.shiverOffsetX   = 0;
+   this.shiverOffsetY   = 0;
 
   }
-  update() {
-    // update properties here to achieve
-    // your dancer's desired moves and behaviour
-     // how many frames 
-    let elapsed = frameCount - this.timeOfKeyEvent;
+  startShiver() {
+    this.shiverStart = frameCount;
+  }
 
-    // base bend (0→max→0)
+  update() {
+    let elapsed = frameCount - this.timeOfKeyEvent;
     let baseBend = abs(sin(frameCount * this.speed)) * this.maxBend;
 
     if (elapsed < this.effectDuration) {
       this.squatAngle = -baseBend * 2;
     } else {
-      // normal looping squat:
       this.squatAngle = -baseBend;
     }
 
-    
-    // this.squatAngle = -abs(sin(frameCount * speed)*maxBend)
-    // //map(this.squatAngle, -1,1,0,maxBend)
     this.headOffset = map(this.squatAngle, 0, this.maxBend, 0, -10);
-
     let elapsed2 = frameCount - this.timeOfKeyEvent;
  
   if (elapsed2 < this.hatEffectDuration) {
 
     let t = elapsed2 / this.hatEffectDuration;
     this.hatOffsetY     = -sin(t * PI) * this.hatJumpHeight;
-   
-    // this.hatLooseOffset = sin(frameCount * this.hatLooseSpeed)
-    //                      * this.hatLooseAmp
-    //                      * (1 - t);
   } else {
     this.hatOffsetY     = 0;
-    //this.hatLooseOffset = 0;
   }
   this.isWinking = (frameCount - this.timeOfWink) < this.winkDuration;
 
-
-
+  //shiver
+  let sElapsed = frameCount - this.shiverStart;
+    if (sElapsed < this.shiverDuration) {
+      // ramp down amplitude over the duration
+      let t = 1 - (sElapsed / this.shiverDuration);    // 1→0
+      let amp = this.shiverAmp * t;
+      this.shiverOffsetX = random(-amp, amp);
+      this.shiverOffsetY = random(-amp, amp);
+    } else {
+      this.shiverOffsetX = 0;
+      this.shiverOffsetY = 0;
+    }
   }
-  display() {
-    // the push and pop, along with the translate 
-    // places your whole dancer object at this.x and this.y.
-    // you may change its position on line 19 to see the effect.
+
+  display() {  
     push();
-    translate(this.x, this.y);
-    // ******** //
-    // ⬇️ draw your dancer from here ⬇
+    translate(this.x+ this.shiverOffsetX, this.y+this.hatOffsetY+ this.shiverOffsetY);
     push()
     //head
     translate(0, this.headOffset)
@@ -214,13 +206,7 @@ class SandraDancer {
       line(-20 - 6, -10, -20 + 6, -10);
       noStroke();
     }
-  
-
-    //circle(-20,-10,13)
     pop()
-
-    
-
     
     //right leg
     push()
@@ -251,7 +237,6 @@ class SandraDancer {
         circle(0,0,10)    
     pop()
 
-
     //left leg
   push()
     translate(-25,30)
@@ -277,24 +262,12 @@ class SandraDancer {
         pop()
     pop()
 
-
-   
-
-
     //left hip
     fill(this.col)
     circle(0,0,10)
   pop()
 
-
-  
-
-
-
-//  push();
-//   fill("yellow")
-//   translate(0, this.hatOffsetY+this.headOffset);
-
+    //hat
   for (let i = 0; i <= 50; i += 5) {
     push();
    fill("yellow")
@@ -307,36 +280,20 @@ class SandraDancer {
 
     pop()
   }
-  //pop();
-
-
-
-    // ⬆️ draw your dancer above ⬆️
-    // ******** //
-
-    // the next function draws a SQUARE and CROSS
-    // to indicate the approximate size and the center point
-    // of your dancer.
-    // it is using "this" because this function, too, 
-    // is a part if your Dancer object.
-    // comment it out or delete it eventually.
-    //this.drawReferenceShapes()
+  
 
     pop();
   }
   triggerA(){
-    // this function will be called when the "a" key is pressed.
-    // your dancer should perform some kind of reaction (i.e. make a special move or gesture) 
     this.timeOfKeyEvent = frameCount;
 
 
   }
   triggerD(){
-    // this function will be called when the "d" key is pressed.
-    // your dancer should perform some kind of reaction (i.e. make a special move or gesture) 
     this.timeOfWink = frameCount;
-     //this.timeOfHatEvent = frameCount;
-
+  if (winkSound && winkSound.isLoaded()) {
+      winkSound.play();
+    }
   }
   // drawReferenceShapes() {
   //   noFill();
@@ -357,21 +314,12 @@ function keyPressed(){
   } else if (key === "d"){
     dancer.triggerD();
   } else if (key === "p"){
-
-    // intensifies existing fire
-
-    // for (let i = 0; i < 100; i++){
-    //   particles.push(new Particle(width * 0.75, height * 0.85));
-    // }
-
-
     // start new fire
     let x = random(width);
     let y = random(height/2, height)
-     for (let i = 0; i < NUM_OF_PARTICLES; i++){
+     for (let i = 0; i < numOfParticles; i++){
       particles.push(new Particle(x, y));
-    }
+     }
   }
 }
-
 
