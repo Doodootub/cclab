@@ -80,6 +80,14 @@ function draw() {
   
     if (val[0] > 500) {
       // trigger your particles, you will have to adjust the threshold in the if statements
+       // start new fire
+    let x = random(width);
+    let y = random(height/2, height)
+     for (let i = 0; i < numOfParticles; i++){
+      particles.push(new Particle(x, y));
+     }
+
+
     }
     if (val[1] == 1) {
       dancer.triggerA() 
