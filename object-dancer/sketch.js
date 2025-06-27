@@ -8,6 +8,12 @@ let winkSound
 
 const shiverThreshold= 800
 
+// arduino
+let port;
+let connectBtn;
+let str; //string from arduino
+let val; // array with sensor values
+
 function preload(){
   winkSound = loadSound('lib/beat.mp3');
 }
@@ -21,6 +27,21 @@ function setup() {
   // for (let i = 0; i < NUM_OF_PARTICLES; i++) {
   //   particles[i] = new Particle(width*0.75, height * 0.85);
   // }
+
+  port = createSerial();
+
+  // in setup, we can open ports we have used previously
+  // without user interaction
+  let usedPorts = usedSerialPorts();
+  if (usedPorts.length > 0) {
+    port.open(usedPorts[0], 57600);
+  }
+
+  // any other ports can be opened via a dialog after
+  // user interaction (see connectBtnClick below)
+  connectBtn = createButton("Connect to Arduino");
+  connectBtn.position(20, 370);
+  connectBtn.mousePressed(connectBtnClick);
 }
 
 function draw() {
@@ -42,6 +63,31 @@ function draw() {
 
   dancer.update();
   dancer.display();
+
+  str = port.readUntil("\n");
+  //str = trim(str); //remove any empty space
+
+  if (str.length > 0) {
+    val = int(str.split(",")); //split the values if there is a comma in between and convert them into numbers
+
+    // you receive three values from arduino that are stored
+    // in the array called val
+    // the first value is a range, see it like this
+    fill(255)
+    text(val[0], 20, 20)
+    // the second and third value are either 0 or 1 and will most likely
+    // trigger your dancer's two special motions
+  
+    if (val[0] > 500) {
+      // trigger your particles, you will have to adjust the threshold in the if statements
+    }
+    if (val[1] == 1) {
+      dancer.triggerA() 
+    }
+    if (val[2] == 1) {
+      dancer.triggerD()
+    }
+  }
    
 }
 
@@ -320,6 +366,14 @@ function keyPressed(){
      for (let i = 0; i < numOfParticles; i++){
       particles.push(new Particle(x, y));
      }
+  }
+}
+
+function connectBtnClick() {
+  if (!port.opened()) {
+    port.open("Arduino", 57600);
+  } else {
+    port.close();
   }
 }
 
