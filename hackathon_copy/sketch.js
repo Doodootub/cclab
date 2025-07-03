@@ -70,6 +70,7 @@ function draw() {
       runMicLogic();
       playGame();
     }
+
 }
 
 function showStartScreen() {
@@ -86,7 +87,7 @@ function runMicLogic() {
   let vol = mic.getLevel();
   preVol = lerp(preVol, vol, 0.1);
   let now = millis();
-  let speaking = preVol > 0.08;
+  speaking = preVol > 0.08;
 
   if (speaking) {
     if (now - lastSoundTime > 3000 && healthIndex > 0) {
@@ -152,8 +153,6 @@ function playGame() {
 
 
 
-
-
 class AwkBar{
   constructor(){
     this.x = width-350;
@@ -183,6 +182,7 @@ class AwkBar{
     }
      // process
     let pct = this.level/10; 
+    noStroke()
     fill('limegreen');
     rect(this.x, this.y, this.w * pct, this.h, 4);
     pop()
@@ -454,9 +454,18 @@ class Tamagotchi{
         stroke(0)
         strokeWeight(8)
         line(25,40,-25,40)
-          //angry mark
-        scale(0.3)
-        image(angryMarkImg, 300, -600); 
+
+         // angry mark 动画
+        push();
+          let angryScale = map(sin(frameCount * 0.8), -1, 1, 0.15, 0.35); // 0.3左右动态缩放
+          translate(100,-230);  // 注意是相对于当前 translate(this.x, this.y) 后的局部坐标
+          scale(angryScale);
+          imageMode(CENTER);
+          image(angryMarkImg, 0, 0);
+        pop();
+        // //angry mark
+        // scale(0.3)
+        // image(angryMarkImg, 300, -600); 
       }else if (this.showCrying) {
           noStroke()
           this.drawLimbosStatics()
@@ -633,51 +642,21 @@ class Tamagotchi{
 
 }
 
-// function keyPressed() {
-//   if (key == 'a') {
-//      tama.setHeart(10);
-//      r = 184
-//      g = 224
-//      b = 134
-//      tama.col = color(255, 176, 219)
-//      tama.feetCol = color(173, 40, 113)
-//      leveltest = 10
-//   }else if (key == 's') {
-//     tama.setHeart(8);
-//      r = 255
-//      g = 149
-//      b = 135
-//      tama.col = color(255, 176, 219)
-//      tama.feetCol = color(173, 40, 113)
-//      leveltest = 8
-//   }else if (key == 'd') {tama.setHeart(6);
-//      r = 186
-//      g = 72
-//      b = 127
-//      tama.col = color(255, 176, 219)
-//      tama.feetCol = color(173, 40, 113)
-//      leveltest = 6
-//   }else if (key == 'f') {tama.setHeart(4);
-//      r = 85
-//      g = 88
-//      b = 121
-//      tama.col = color(255, 176, 219)
-//      tama.feetCol = color(173, 40, 113)
-//      leveltest = 4
-//   }else if (key == 'g') {tama.setHeart(2);
-//      r = 152
-//      g = 161
-//      b = 188
-//      tama.col = color(255, 176, 219)
-//      tama.feetCol = color(173, 40, 113)
-//      leveltest = 2
-//   }else if (key == 'h') {tama.setHeart(0);
-//      r = 244
-//      g = 235
-//      b = 211
-//      leveltest = 0
-//   }
-// }
+function keyPressed() {
+  tama.x = constrain(tama.x, 300, width - 300);
+  tama.y = constrain(tama.y, 250, height - 250);
+
+  if (key == "a") {
+    tama.x -= 50;
+  } else if (key == "d") {
+    tama.x += 50;
+  } else if (key == "w"){
+    tama.y -= 20
+  }else if (key == "s"){
+    tama.y += 20
+  }
+}
+
 
 function mousePressed() {
   if (gameStarted == false) {
