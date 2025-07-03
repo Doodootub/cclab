@@ -455,17 +455,15 @@ class Tamagotchi{
         strokeWeight(8)
         line(25,40,-25,40)
 
-         // angry mark 动画
+         // angry mark
         push();
-          let angryScale = map(sin(frameCount * 0.8), -1, 1, 0.15, 0.35); // 0.3左右动态缩放
-          translate(100,-230);  // 注意是相对于当前 translate(this.x, this.y) 后的局部坐标
+          let angryScale = map(sin(frameCount * 0.8), -1, 1, 0.15, 0.35); 
+          translate(100,-230);  
           scale(angryScale);
           imageMode(CENTER);
           image(angryMarkImg, 0, 0);
         pop();
-        // //angry mark
-        // scale(0.3)
-        // image(angryMarkImg, 300, -600); 
+     
       }else if (this.showCrying) {
           noStroke()
           this.drawLimbosStatics()
